@@ -99,7 +99,7 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
 
         // test conditions
         require((set.publicSaleStatus || wL), "LOCK");
-        require(newTokenId <= uint16(10030), "TOTAL_SUPPLY_REACHED");
+        require(newTokenId <= uint16(10000), "TOTAL_SUPPLY_REACHED");
         require(balanceOf(msg.sender) == 0, "ONLY_ONE_NFT");
 
         uint balance = msg.sender.balance + msg.value;
