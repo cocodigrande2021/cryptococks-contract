@@ -39,7 +39,8 @@ describe.skip("Maximum Supply", function () {
         contracts.cryptoCocks,
         await tx,
         percentileData[i].length,
-        i + 1
+        i + 1,
+        30
       );
     }
   }).timeout(0);

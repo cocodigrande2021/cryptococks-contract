@@ -284,12 +284,13 @@ describe("Mint", function () {
           contracts.cryptoCocks,
           await tx,
           percentileData[i].length,
-          i + 1
+          i + 1,
+          INIT_MINT_COUNT
         );
 
         await expect(tx)
           .to.emit(contracts.cryptoCocks, "Mint")
-          .withArgs(i + 1, balance);
+          .withArgs(i + 30 + 1, balance);
       }
     }).timeout(0);
 
@@ -311,7 +312,8 @@ describe("Mint", function () {
           contracts.cryptoCocks,
           await tx,
           percentileData[i].length,
-          i + 1
+          i + 1,
+          INIT_MINT_COUNT
         );
 
         const receipt = await tx.wait();
@@ -328,11 +330,11 @@ describe("Mint", function () {
         const minter = await getMinter(minters, 2, i, percentileData);
         await mint(contracts.cryptoCocks, minter);
 
-        const tokenId = i + 1;
+        const tokenId = i + 30 + 1;
         const tokenUri = await contracts.cryptoCocks.tokenURI(tokenId);
         expect(tokenUri).to.equal(
           `ipfs://bafybeiaujyvo6hnncdid4rfmwh2bgvyvgji2qewna6qtgwflok6itxpwxi/${
-            percentileData[tokenId - 1].length
+            percentileData[tokenId - 1 - 30].length
           }/${tokenId}/metadata.json`
         );
       }

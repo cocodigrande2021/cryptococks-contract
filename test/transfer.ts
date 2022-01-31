@@ -159,7 +159,7 @@ describe("Transfers", function () {
       const tx = mint(contracts.cryptoCocks, minter);
 
       // note: token id counter begins with 1
-      if ((i + 1) % 50 === 0) {
+      if ((i + 30 + 1) % 50 === 0) {
         await expect(() => tx).to.changeEtherBalance(
           team,
           valueSum.div(100).mul(PERCENTAGE_TEAM)
