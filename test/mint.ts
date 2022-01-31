@@ -343,7 +343,6 @@ describe("Mint", function () {
     it("should calculate lengths correctly for a late initMint", async () => {
       for (let i = 0; i < 100; i++) {
         const minter = await getMinter(minters, 3, i, percentileData);
-        const balance = await minter.getBalance();
         await mint(contracts.cryptoCocks, minter);
       }
 
