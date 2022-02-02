@@ -73,7 +73,7 @@ library OrderStatisticsTreeLib {
         }
     }
 
-    function getLength(Tree storage self, uint16 newTokenId, uint balance) public returns(uint8) {
+    function insertCock(Tree storage self, uint16 newTokenId, uint balance) public returns(uint8) {
         insert(self, newTokenId, balance);
 
         if (self.minLength == EMPTY) {

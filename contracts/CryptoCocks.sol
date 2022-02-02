@@ -112,7 +112,7 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
         _safeMint(msg.sender, uint(newTokenId));
 
         // create token URI
-        _createTokenURI(newTokenId, tree.getLength(newTokenId, balance));
+        _createTokenURI(newTokenId, tree.insertCock(newTokenId, balance));
         emit Mint(newTokenId, balance);
 
         /**
@@ -218,7 +218,7 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
     override(ERC721, ERC721URIStorage)
     returns (string memory)
     {
-        return string(abi.encodePacked(CryptoCocksLib.getIdentifier(tokenId), super.tokenURI(tokenId)));
+        return string(abi.encodePacked(CryptoCocksLib.getCid(tokenId), super.tokenURI(tokenId)));
     }
 
     /**
