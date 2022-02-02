@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "./OrderStatisticsTreeLib.sol";
+import "./CryptoCocksLib.sol";
 
 contract TokenInterface {
     // solhint-disable-next-line no-empty-blocks
@@ -28,11 +29,6 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
         uint8 availRoyal; // available royal for community wallets (in percentage points)
         uint8 numContracts; // number of whitelisted contracts
         uint128 minFee; // in Wei
-        string b1;
-        string b2;
-        string b3;
-        string b4;
-        string b5;
     }
 
     struct Balances {
@@ -77,13 +73,7 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
     address payable public donationWallet;
 
     constructor() {
-        set = Settings(false, true, true, 100, 20, 0, 0.02 ether,
-            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu",
-            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu",
-            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu",
-            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu",
-            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu"
-        );
+        set = Settings(false, true, true, 100, 20, 0, 0.02 ether);
         bal = Balances(0, 0);
         teamWallet = payable(0xb1eE86786875E110A5c1Ab8cB6BA2ad21994E60e); //multisig address
         donationWallet = payable(0x1ea471c91Ad6cbCFa007FBd6A605522519f9FD64); //enter giving block address
@@ -228,7 +218,7 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
     override(ERC721, ERC721URIStorage)
     returns (string memory)
     {
-        return string(abi.encodePacked("ipfs://bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu/", super.tokenURI(tokenId)));
+        return string(abi.encodePacked(CryptoCocksLib.getIdentifier(tokenId), super.tokenURI(tokenId)));
     }
 
     /**
