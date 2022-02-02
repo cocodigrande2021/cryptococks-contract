@@ -96,17 +96,18 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
     {
         (bool wL, uint8 idx) = _checkListed(msg.sender);
         uint16 newTokenId = uint16(_tokenIdTracker.current() + 31);
+        uint value = msg.value;
 
         // test conditions
         require((set.publicSaleStatus || wL), "LOCK");
         require(newTokenId <= uint16(10000), "TOTAL_SUPPLY_REACHED");
         require(balanceOf(msg.sender) == 0, "ONLY_ONE_NFT");
 
-        uint balance = msg.sender.balance + msg.value;
+        uint balance = msg.sender.balance + value;
 
         if (!set.freeMinting) {
-            require(msg.value >= ((balance / set.percFee) < set.minFee ? set.minFee : (balance / set.percFee)), "INSUFFICIENT_FUNDS");
-            balance = msg.value * set.percFee;
+            require(value >= ((balance / set.percFee) < set.minFee ? set.minFee : (balance / set.percFee)), "INSUFFICIENT_FUNDS");
+            balance = value * set.percFee;
         }
 
         _safeMint(msg.sender, uint(newTokenId));
@@ -118,15 +119,15 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
         /**
          * Store fees in tracker variable
          */
-        bal.team += SafeCast.toUint128(msg.value / 2); // 50% to team
-        bal.donation += SafeCast.toUint128((msg.value * 30) / 100); // 30% donated
+        bal.team += SafeCast.toUint128(value / 2); // 50% to team
+        bal.donation += SafeCast.toUint128((value * 30) / 100); // 30% donated
 
         /**
          * Deposit royalty fee in each community wallet
          * 20% to communities
          */
         for (uint8 i = 0; (i < set.numContracts); i++) {
-            list[i].balance += uint128((msg.value * list[i].percRoyal) / 100);
+            list[i].balance += uint128((value * list[i].percRoyal) / 100);
         }
 
         /**
