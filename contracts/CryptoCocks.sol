@@ -27,8 +27,12 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
         uint8 percFee; // int only (e.g., 1/100)
         uint8 availRoyal; // available royal for community wallets (in percentage points)
         uint8 numContracts; // number of whitelisted contracts
-        uint8 minLength; // tracking minLength assigned so far
         uint128 minFee; // in Wei
+        string b1;
+        string b2;
+        string b3;
+        string b4;
+        string b5;
     }
 
     struct Balances {
@@ -73,7 +77,13 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
     address payable public donationWallet;
 
     constructor() {
-        set = Settings(false, true, true, 100, 20, 0, 10, 0.02 ether);
+        set = Settings(false, true, true, 100, 20, 0, 0.02 ether,
+            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu",
+            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu",
+            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu",
+            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu",
+            "bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu"
+        );
         bal = Balances(0, 0);
         teamWallet = payable(0xb1eE86786875E110A5c1Ab8cB6BA2ad21994E60e); //multisig address
         donationWallet = payable(0x1ea471c91Ad6cbCFa007FBd6A605522519f9FD64); //enter giving block address
@@ -111,23 +121,8 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
 
         _safeMint(msg.sender, uint(newTokenId));
 
-        // insert into tree
-        if (!tree.exists(balance)) {
-            tree.insert(newTokenId, balance);
-        }
-
-        // calculate length
-        uint sum = tree.count() - 1;
-        uint size = sum > 0 ? ((100 * (tree.rank(balance) - 1)) / sum) : 100;
-
-        uint8 length = uint8(((size - (size % 10)) / 10) + 1);
-        if (length < set.minLength) {
-            length = set.minLength - 1;
-            set.minLength = length;
-        }
-
         // create token URI
-        _createTokenURI(newTokenId, length);
+        _createTokenURI(newTokenId, tree.getLength(newTokenId, balance));
         emit Mint(newTokenId, balance);
 
         /**
@@ -138,8 +133,11 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
 
         /**
          * Deposit royalty fee in each community wallet
+         * 20% to communities
          */
-        _depositRoyaltyFee(msg.value); // 20% to communities
+        for (uint8 i = 0; (i < set.numContracts); i++) {
+            list[i].balance += uint128((msg.value * list[i].percRoyal) / 100);
+        }
 
         /**
          * Increase supply tracker of whitelisted contract, if applicable.
@@ -230,7 +228,7 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
     override(ERC721, ERC721URIStorage)
     returns (string memory)
     {
-        return super.tokenURI(tokenId);
+        return string(abi.encodePacked("ipfs://bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu/", super.tokenURI(tokenId)));
     }
 
     /**
@@ -243,13 +241,6 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
     returns (bool)
     {
         return super.supportsInterface(interfaceId);
-    }
-
-    /**
-     * Set _baseURI()
-     */
-    function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://bafybeiaujyvo6hnncdid4rfmwh2bgvyvgji2qewna6qtgwflok6itxpwxi/";
     }
 
     /**
@@ -281,15 +272,6 @@ contract CryptoCocks is ERC721("CryptoCocks", "CC"), ERC721Enumerable, ERC721URI
             }
         }
         return (false, 0);
-    }
-
-    /**
-    * Deposit royalty fee in each community wallet
-    */
-    function _depositRoyaltyFee(uint _fee) private {
-        for (uint8 i = 0; (i < set.numContracts); i++) {
-            list[i].balance += uint128((_fee * list[i].percRoyal) / 100);
-        }
     }
 
     /**

@@ -25,6 +25,8 @@ import { MintEvent } from "../typechain/CryptoCocks";
 
 const INIT_MINT_COUNT = 30;
 
+const cids = ["first", "second", "third"];
+
 describe("Mint", function () {
   let contracts: Contracts;
   let owner: SignerWithAddress;
@@ -325,7 +327,7 @@ describe("Mint", function () {
       }
     }).timeout(0);
 
-    it("should set the token URI correctly", async () => {
+    it.only("should set the token URI correctly", async () => {
       for (let i = 0; i < 100; i++) {
         const minter = await getMinter(minters, 2, i, percentileData);
         await mint(contracts.cryptoCocks, minter);
@@ -333,7 +335,7 @@ describe("Mint", function () {
         const tokenId = i + 30 + 1;
         const tokenUri = await contracts.cryptoCocks.tokenURI(tokenId);
         expect(tokenUri).to.equal(
-          `ipfs://bafybeiaujyvo6hnncdid4rfmwh2bgvyvgji2qewna6qtgwflok6itxpwxi/${
+          `ipfs://bafybeicg43w44mohpqgo66axyi5ferzqociquurdhxdc46th4rbzxtctpu/${
             percentileData[tokenId - 1 - 30].length
           }_${tokenId}.json`
         );
